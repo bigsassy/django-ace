@@ -22,6 +22,9 @@ class AceWidget(forms.Textarea):
         showinvisibles=False,
         usesofttabs=True,
         tabsize=None,
+        showtoolbar=True,
+        showfoldwidgets=True,
+        showlinenumbers=True,
         *args,
         **kwargs
     ):
@@ -36,6 +39,9 @@ class AceWidget(forms.Textarea):
         self.showinvisibles = showinvisibles
         self.tabsize = tabsize
         self.usesofttabs = usesofttabs
+        self.showtoolbar = showtoolbar
+        self.showfoldwidgets = showfoldwidgets
+        self.showlinenumbers = showlinenumbers
         super(AceWidget, self).__init__(*args, **kwargs)
 
     @property
@@ -75,6 +81,8 @@ class AceWidget(forms.Textarea):
         ace_attrs["data-showprintmargin"] = "true" if self.showprintmargin else "false"
         ace_attrs["data-showinvisibles"] = "true" if self.showinvisibles else "false"
         ace_attrs["data-usesofttabs"] = "true" if self.usesofttabs else "false"
+        ace_attrs["data-showfoldwidgets"] = "true" if self.showfoldwidgets else "false"
+        ace_attrs["data-showlinenumbers"] = "true" if self.showlinenumbers else "false"
 
         textarea = super(AceWidget, self).render(name, value, attrs, renderer)
 
@@ -82,12 +90,14 @@ class AceWidget(forms.Textarea):
 
         # add toolbar
         toolbar = (
-            '<div class="django-ace-editor">'
-            '<div style="width: %s" class="django-ace-toolbar">'
+            '<div style="width: %(width)s" class="django-ace-toolbar">'
             '<a href="./" class="django-ace-max_min"></a>'
-            "</div>%s</div>"
-        )
+        ) if self.showtoolbar else ''
 
-        html = toolbar % (self.width, html)
+        html = (
+            '<div class="django-ace-editor">'
+            '%(toolbar)s'
+            "</div>%(html)s</div>"
+        ) % {"width": self.width, "html": html, "toolbar": toolbar}
 
         return mark_safe(html)

@@ -80,6 +80,8 @@
             minlines = widget.getAttribute('data-minlines'),
             maxlines = widget.getAttribute('data-maxlines'),
             showprintmargin = widget.getAttribute('data-showprintmargin'),
+            showfoldwidgets = widget.getAttribute('data-showfoldwidgets'),
+            showlinenumbers = widget.getAttribute('data-showlinenumbers'),
             showinvisibles = widget.getAttribute('data-showinvisibles'),
             tabsize = widget.getAttribute('data-tabsize'),
             usesofttabs = widget.getAttribute('data-usesofttabs'),
@@ -87,11 +89,13 @@
             main_block = toolbar.parentNode;
 
         // Toolbar maximize/minimize button
-        var min_max = toolbar.getElementsByClassName('django-ace-max_min');
-        min_max[0].onclick = function() {
-            minimizeMaximize(widget, main_block, editor);
-            return false;
-        };
+        var min_max = toolbar.getElementsByClassName('django-ace-max_min')[0];
+        if (min_max) {
+            min_max.onclick = function() {
+                minimizeMaximize(widget, main_block, editor);
+                return false;
+            };
+        }
 
         editor.getSession().setValue(textarea.value);
 
@@ -120,6 +124,12 @@
         }
         if (showinvisibles == "true") {
             editor.setShowInvisibles(true);
+        }
+        if (showfoldwidgets == "false") {
+            editor.setOption("showFoldWidgets", false);
+        }
+        if (showlinenumbers == "false") {
+            editor.setOption("showLineNumbers", false);
         }
         if (!!tabsize) {
             editor.setOption("tabSize", tabsize);
